@@ -1,0 +1,117 @@
+{
+  "port": 5757,
+  "data_dir": "data",
+  "number_format": "SOR/{section}/{n:03d}",
+  "doc_types": {
+    "SOR": {
+      "label": "Site Observation Report (SOR)",
+      "format": "SOR/{section}/{n:03d}",
+      "scope": "global"
+    },
+    "NCR": {
+      "label": "Non-Conformance Report (NCR)",
+      "format": "NCR/{section}/{n:03d}",
+      "scope": "global"
+    },
+    "LET": {
+      "label": "Official Letter (LET)",
+      "format": "LET/{section}/{n:03d}",
+      "scope": "global"
+    }
+  },
+  "numbering_scope": "global",
+  "defaults": {
+    "project": "Al AWAEL Tower Project",
+    "contractor": "Comatec",
+    "from": "Ahmed Al-Mousa Engineering",
+    "distribution_copy_to": "Ahmed Al-Mousa Engineering"
+  },
+  "sections": [
+    {
+      "code": "CIV",
+      "name": "مهندس مدني - Civil Engineer",
+      "title": "Civil Engineer",
+      "engineer": "Ahmed AlHanafi",
+      "prefix": "ENG.",
+      "step": "civ",
+      "email": ""
+    },
+    {
+      "code": "CSV",
+      "name": "مشرف مدني - Civil Supervisor",
+      "title": "Civil Supervisor",
+      "engineer": "Ahmed Maher",
+      "prefix": "",
+      "extra_approver": "CIV",
+      "email": ""
+    },
+    {
+      "code": "ARC",
+      "name": "مهندس معماري - Architectural Engineer",
+      "title": "Architectural Engineer",
+      "engineer": "Marwan Mostafa",
+      "prefix": "ENG.",
+      "email": ""
+    },
+    {
+      "code": "ELE",
+      "name": "مهندس كهرباء - Electrical Engineer",
+      "title": "Electrical Engineer",
+      "engineer": "Ali Elsayed",
+      "prefix": "ENG.",
+      "email": ""
+    },
+    {
+      "code": "MEC",
+      "name": "مهندس ميكانيكا - Mechanical Engineer",
+      "title": "Mechanical Engineer",
+      "engineer": "Mohammed Al-Amin",
+      "prefix": "ENG.",
+      "email": ""
+    },
+    {
+      "code": "SUR",
+      "name": "مساح - Surveyor",
+      "title": "Surveyor",
+      "engineer": "Mohammed Yousef",
+      "prefix": "",
+      "email": ""
+    },
+    {
+      "code": "ADM",
+      "name": "Project Management",
+      "title": "Project Management",
+      "engineer": "System Administrator",
+      "prefix": "ENG.",
+      "email": ""
+    }
+  ],
+  "base_url": "http://SERVER-IP:5757",
+  "initial_password": "1234",
+  "admin_password": "1234",
+  "smtp": {
+    "host": "smtp.office365.com",
+    "port": 587,
+    "security": "starttls",
+    "auth": true,
+    "default_user": "project.portal@yourcompany.com",
+    "default_password": "xxxx-xxxx-xxxx-xxxx",
+    "timeout": 15
+  },
+  "approvers": [
+    {
+      "id": "hassan",
+      "name": "Hassan Osama",
+      "title": "Construction Manager",
+      "step": "cm",
+      "email": ""
+    },
+    {
+      "id": "mamdouh",
+      "name": "Mamdouh Abouzaid",
+      "title": "Project Manager",
+      "step": "pm",
+      "email": ""
+    }
+  ]
+}

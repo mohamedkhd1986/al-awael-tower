@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: Arial, sans-serif; font-size: 12px; color: #111; margin: 0; padding: 0; }
+  .header-logos { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #b91c1c; padding-bottom: 8px; margin-bottom: 12px; }
+  .header-logos img { max-height: 55px; max-width: 160px; object-fit: contain; }
+  .title-banner { background: #b91c1c; color: #fff; text-align: center; font-size: 16px; font-weight: bold; padding: 7px; margin-bottom: 12px; letter-spacing: 0.5px; }
+  table.meta { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+  table.meta td, table.meta th { border: 1px solid #444; padding: 6px 8px; font-size: 11.5px; }
+  table.meta th { background: #fef2f2; color: #991b1b; text-align: left; width: 22%; }
+  .section-box { border: 1px solid #444; margin-bottom: 12px; page-break-inside: avoid; }
+  .section-head { background: #f3f4f6; font-weight: bold; padding: 6px 10px; border-bottom: 1px solid #444; color: #991b1b; }
+  .section-body { padding: 10px; min-height: 45px; white-space: pre-wrap; line-height: 1.5; unicode-bidi: plaintext; }
+  .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .photos img { width: 100%; max-height: 220px; object-fit: contain; border: 1px solid #ccc; }
+  table.sigs { width: 100%; border-collapse: collapse; margin-top: 18px; page-break-inside: avoid; }
+  table.sigs td, table.sigs th { border: 1px solid #444; padding: 8px; text-align: center; vertical-align: middle; width: 33.3%; }
+  table.sigs th { background: #fef2f2; color: #991b1b; }
+  .sig-img { max-height: 48px; max-width: 140px; object-fit: contain; display: block; margin: 4px auto; }
+</style>
+</head>
+<body>
+  <div class="header-logos">
+    {% for lg in logos %}{% if lg %}<img src="{{ lg }}">{% endif %}{% endfor %}
+  </div>
+  <div class="title-banner">NON-CONFORMANCE REPORT (NCR)</div>
+
+  <table class="meta">
+    <tr>
+      <th>NCR No.</th><td><strong>{{ number }}</strong></td>
+      <th>Date</th><td>{{ date }}</td>
+    </tr>
+    <tr>
+      <th>Project</th><td>{{ project }}</td>
+      <th>Severity</th><td><strong style="color:#b91c1c;">{{ payload.ncr_severity }}</strong></td>
+    </tr>
+    <tr>
+      <th>Contractor</th><td>{{ contractor }}</td>
+      <th>Location / Area</th><td>{{ payload.ncr_location }}</td>
+    </tr>
+    <tr>
+      <th>Spec / Drawing Ref.</th><td>{{ payload.ncr_spec_ref }}</td>
+      <th>Target Closure Date</th><td>{{ payload.ncr_due_date }}</td>
+    </tr>
+    <tr>
+      <th>Subject</th><td colspan="3"><strong>{{ subject }}</strong></td>
+    </tr>
+  </table>
+
+  <div class="section-box">
+    <div class="section-head">1. Description of Non-Conformance</div>
+    <div class="section-body">
+      <ol style="margin:0; padding-left:20px;">
+        {% for item in items %}<li style="unicode-bidi:plaintext;">{{ item }}</li>{% endfor %}
+      </ol>
+    </div>
+  </div>
+
+  {% if payload.ncr_root_cause %}
+  <div class="section-box">
+    <div class="section-head">2. Root Cause / Reference Violation</div>
+    <div class="section-body">{{ payload.ncr_root_cause }}</div>
+  </div>
+  {% endif %}
+
+  <div class="section-box">
+    <div class="section-head">3. Required Corrective Action</div>
+    <div class="section-body">{{ payload.ncr_corrective_action }}</div>
+  </div>
+
+  {% if images %}
+  <div class="section-box">
+    <div class="section-head">4. Site Photographs</div>
+    <div class="section-body">
+      <div class="photos">
+        {% for img in images %}<img src="{{ img }}">{% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <table class="sigs">
+    <tr>
+      <th>Prepared By ({{ title }})</th>
+      {% for ap in approvals %}<th>Approved By ({{ ap.title }})</th>{% endfor %}
+    </tr>
+    <tr>
+      <td>
+        <div><strong>{{ prefix }} {{ name }}</strong></div>
+        {% if owner_sig %}<img class="sig-img" src="{{ owner_sig }}">{% endif %}
+        <div style="font-size:10px;color:#555;">{{ date }}</div>
+      </td>
+      {% for ap in approvals %}
+      <td>
+        <div><strong>{{ ap.name }}</strong></div>
+        {% if ap.sig %}<img class="sig-img" src="{{ ap.sig }}">{% endif %}
+        <div style="font-size:10px;color:#555;">{{ ap.date }}</div>
+      </td>
+      {% endfor %}
+    </tr>
+  </table>
+</body>
+</html>

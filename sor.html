@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: Arial, sans-serif; font-size: 12px; color: #111; margin: 0; padding: 0; }
+  .header-logos { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #1e3a8a; padding-bottom: 8px; margin-bottom: 12px; }
+  .header-logos img { max-height: 55px; max-width: 160px; object-fit: contain; }
+  .title-banner { background: #1e3a8a; color: #fff; text-align: center; font-size: 16px; font-weight: bold; padding: 7px; margin-bottom: 12px; letter-spacing: 0.5px; }
+  table.meta { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+  table.meta td, table.meta th { border: 1px solid #444; padding: 6px 8px; font-size: 11.5px; }
+  table.meta th { background: #eff6ff; color: #1e3a8a; text-align: left; width: 20%; }
+  .section-box { border: 1px solid #444; margin-bottom: 12px; page-break-inside: avoid; }
+  .section-head { background: #f3f4f6; font-weight: bold; padding: 6px 10px; border-bottom: 1px solid #444; color: #1e3a8a; }
+  .section-body { padding: 10px; min-height: 80px; line-height: 1.55; }
+  .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .photos img { width: 100%; max-height: 220px; object-fit: contain; border: 1px solid #ccc; }
+  table.sigs { width: 100%; border-collapse: collapse; margin-top: 18px; page-break-inside: avoid; table-layout: fixed; }
+  table.sigs td, table.sigs th { border: 1px solid #444; padding: 8px; text-align: center; vertical-align: middle; }
+  table.sigs th { background: #eff6ff; color: #1e3a8a; }
+  .sig-img { max-height: 48px; max-width: 140px; object-fit: contain; display: block; margin: 4px auto; }
+</style>
+</head>
+<body>
+  <div class="header-logos">
+    {% for lg in logos %}{% if lg %}<img src="{{ lg }}">{% endif %}{% endfor %}
+  </div>
+  <div class="title-banner">SITE OBSERVATION REPORT (SOR)</div>
+  <table class="meta">
+    <tr><th>Ref. No.</th><td><strong>{{ number }}</strong></td><th>Date</th><td>{{ date }}</td></tr>
+    <tr><th>Project</th><td>{{ project }}</td><th>From</th><td>{{ sender }}</td></tr>
+    <tr><th>Contractor</th><td>{{ contractor }}</td><th>Copy To</th><td>{{ copy_to }}</td></tr>
+    <tr><th>Subject</th><td colspan="3"><strong>{{ subject }}</strong></td></tr>
+  </table>
+  <div class="section-box">
+    <div class="section-head">Site Observations &amp; Instructions</div>
+    <div class="section-body">
+      <ol style="margin:0; padding-left:20px;">
+        {% for item in items %}<li style="margin-bottom:6px; unicode-bidi:plaintext;">{{ item }}</li>{% endfor %}
+      </ol>
+    </div>
+  </div>
+  {% if images %}
+  <div class="section-box">
+    <div class="section-head">Attached Site Photographs</div>
+    <div class="section-body"><div class="photos">{% for img in images %}<img src="{{ img }}">{% endfor %}</div></div>
+  </div>
+  {% endif %}
+  <table class="sigs">
+    <tr><th>Prepared By ({{ title }})</th>{% for ap in approvals %}<th>Approved By ({{ ap.title }})</th>{% endfor %}</tr>
+    <tr>
+      <td><div><strong>{{ prefix }} {{ name }}</strong></div>{% if owner_sig %}<img class="sig-img" src="{{ owner_sig }}">{% endif %}<div style="font-size:10px;color:#555;">{{ date }}</div></td>
+      {% for ap in approvals %}<td><div><strong>{{ ap.name }}</strong></div>{% if ap.sig %}<img class="sig-img" src="{{ ap.sig }}">{% endif %}<div style="font-size:10px;color:#555;">{{ ap.date }}</div></td>{% endfor %}
+    </tr>
+  </table>
+</body>
+</html>

@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al AWAEL Tower Project — بوابة التحكم الهندسية والإدارية</title>
+  <style>
+    :root {
+      --primary: #1e3a8a; --accent: #2563eb; --ncr: #dc2626; --let: #059669;
+      --admin: #7c3aed; --bg: #f1f5f9; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); }
+
+    .topbar {
+      background: var(--primary); color: #fff; padding: 8px 24px; min-height: 62px;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15); position: relative; z-index: 200;
+    }
+    .topbar h1 { margin: 0; font-size: 17px; justify-self: start; }
+    .topbar-center-logo {
+      justify-self: center; display: flex; align-items: center; justify-content: center;
+      background: #ffffff; padding: 3px 14px; border-radius: 8px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.22); height: 46px;
+    }
+    .topbar-center-logo img { max-height: 40px; max-width: 170px; object-fit: contain; display: block; }
+    .topbar-left { justify-self: end; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%; object-fit: cover;
+      border: 2px solid #fff; background: #cbd5e1; vertical-align: middle;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: bold; color: var(--primary); font-size: 13px;
+    }
+    .avatar-sm { width: 26px; height: 26px; font-size: 11px; border-width: 1px; margin-left: 6px; border-color: #94a3b8; }
+
+    .notif-wrapper { position: relative; display: inline-block; }
+    .notif-bell {
+      background: rgba(255,255,255,0.15); border: none; color: #fff; padding: 6px 11px;
+      border-radius: 6px; cursor: pointer; font-size: 15px; position: relative;
+    }
+    .notif-badge {
+      position: absolute; top: -5px; right: -5px; background: #ef4444; color: #fff;
+      font-size: 11px; font-weight: bold; padding: 1px 6px; border-radius: 999px;
+    }
+    .notif-dropdown {
+      position: absolute; left: 0; top: 44px; width: 370px; max-height: 430px;
+      background: #fff; color: var(--text); border-radius: 8px; border: 1px solid var(--border);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow-y: auto; z-index: 999;
+    }
+    .notif-item { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 12.5px; cursor: pointer; }
+    .notif-item.unread { background: #eff6ff; font-weight: bold; }
+    .notif-item:hover { background: #f8fafc; }
+
+    .nav-tabs { display: flex; gap: 8px; background: #fff; padding: 10px 24px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .tab-btn { border: 1px solid var(--border); background: #f8fafc; padding: 9px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; color: #334155; transition: 0.15s; }
+    .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tab-btn.ncr-tab.active { background: var(--ncr); border-color: var(--ncr); }
+    .tab-btn.let-tab.active { background: var(--let); border-color: var(--let); }
+    .tab-btn.admin-tab { border-color: #ddd6fe; color: var(--admin); }
+    .tab-btn.admin-tab.active { background: var(--admin); color: #fff; border-color: var(--admin); }
+
+    .container { max-width: 1360px; margin: 20px auto; padding: 0 16px; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .kpi-card { background: var(--card); padding: 14px; border-radius: 8px; border-right: 5px solid var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .kpi-card h4 { margin: 0; font-size: 12px; color: #64748b; }
+    .kpi-card .num { font-size: 24px; font-weight: bold; margin-top: 6px; color: var(--primary); }
+
+    .card { background: var(--card); padding: 20px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 20px; }
+    .card h2 { margin-top: 0; font-size: 17px; color: var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    @media (max-width: 768px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .topbar { grid-template-columns: 1fr; gap: 8px; text-align: center; }
+      .topbar h1, .topbar-left { justify-self: center; }
+    }
+
+    label { display: block; font-size: 13px; font-weight: bold; margin: 10px 0 4px; color: #334155; }
+    input, select, textarea { width: 100%; padding: 9px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 13.5px; }
+    select:disabled, input:disabled { background: #e2e8f0; color: #475569; cursor: not-allowed; }
+
+    .btn { background: var(--accent); color: #fff; border: none; padding: 9px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 5px; transition: 0.15s; }
+    .btn:hover { opacity: 0.92; }
+    .btn-ncr { background: var(--ncr); }
+    .btn-let { background: var(--let); }
+    .btn-admin { background: var(--admin); }
+    .btn-preview { background: #475569; }
+    .btn-warn { background: #ea580c; }
+    .btn-gold { background: #d97706; }
+    .btn-danger { background: #dc2626; }
+    .btn-outline { background: #f8fafc; color: #1e293b; border: 1px solid #cbd5e1; }
+    .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 5px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: right; vertical-align: middle; }
+    th { background: #f8fafc; color: #334155; font-weight: bold; }
+    tr:hover { background: #f8fafc; }
+
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 11.5px; font-weight: bold; }
+    .st-pending_ah { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .st-pending_cm { background: #dbeafe; color: #1e40af; }
+    .st-pending_pm { background: #ede9fe; color: #5b21b6; }
+    .st-approved, .st-completed { background: #dcfce7; color: #166534; }
+    .st-returned { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+    .st-rejected { background: #fee2e2; color: #991b1b; }
+    .st-cancelled { background: #e2e8f0; color: #475569; text-decoration: line-through; }
+
+    .dt-badge { padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; color: #fff; }
+    .dt-SOR { background: var(--accent); }
+    .dt-NCR { background: var(--ncr); }
+    .dt-LET { background: var(--let); }
+
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65);
+      display: none; align-items: center; justify-content: center;
+      z-index: 9000; padding: 16px;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 10px; width: 100%; max-width: 960px;
+      max-height: 92vh; display: flex; flex-direction: column;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3); overflow: hidden;
+    }
+    .modal-header {
+      background: var(--primary); color: #fff; padding: 12px 18px;
+      display: flex; justify-content: space-between; align-items: center; font-weight: bold;
+    }
+    .modal-body { padding: 18px; overflow-y: auto; flex: 1; }
+    .modal-footer {
+      padding: 12px 18px; background: #f8fafc; border-top: 1px solid var(--border);
+      display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap;
+    }
+
+    .login-screen {
+      max-width: 460px; margin: 60px auto; background: #fff; padding: 26px;
+      border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .user-chip {
+      display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+      border: 1px solid var(--border); border-radius: 8px; cursor: pointer; margin-bottom: 6px;
+    }
+    .user-chip:hover, .user-chip.selected { background: #eff6ff; border-color: var(--accent); }
+    .thumb-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+    .thumb-box { position: relative; width: 95px; height: 95px; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden; }
+    .thumb-box img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb-del { position: absolute; top: 2px; left: 2px; background: rgba(220,38,38,0.9); color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 11px; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- الشريط العلوي -->
+  <header class="topbar">
+    <h1>🏗️ {{ cfg.defaults.project or 'Al AWAEL Tower Project' }} — البوابة الهندسية</h1>
+    <div class="topbar-center-logo" id="topCenterLogoBox" style="{{ '' if center_logo else 'display:none;' }}">
+      <img id="topCenterLogoImg" src="{{ center_logo or '' }}" alt="Project Logo">
+    </div>
+    <div class="topbar-left" id="topbarUserArea" style="display:none;">
+      <div class="notif-wrapper">
+        <button class="notif-bell" onclick="toggleNotifDropdown()" title="الإشعارات">
+          🔔 <span id="notifBadge" class="notif-badge hidden">0</span>
+        </button>
+        <div id="notifDropdown" class="notif-dropdown hidden">
+          <div style="padding:10px 14px; background:#f8fafc; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+            <strong>الإشعارات والتنبيهات</strong>
+            <button class="btn btn-sm btn-outline" onclick="markAllNotifRead()">تحديد الكل كمقروء</button>
+          </div>
+          <div id="notifList"></div>
+        </div>
+      </div>
+      <span id="currentUserAvatar"></span>
+      <span id="currentUserName" style="font-size:13px; font-weight:bold;"></span>
+      <button class="btn btn-sm btn-outline" onclick="openDirectNotifyModal()">📣 إرسال إشعار</button>
+      <button class="btn btn-sm btn-outline" onclick="switchTab('ACCOUNT')">⚙️ حسابي</button>
+      <button class="btn btn-sm btn-danger" onclick="doLogout()">خروج</button>
+    </div>
+  </header>
+
+  <!-- شاشة تسجيل الدخول -->
+  <div id="loginView" class="login-screen hidden">
+    <h2 style="margin-top:0; color:var(--primary); text-align:center;">تسجيل الدخول للبوابة الهندسية</h2>
+    <label>اختر الحساب أو اكتب اسم المستخدم:</label>
+    <input type="text" id="loginUserInput" placeholder="معرف المستخدم (مثال: admin أو الكود الهندسي)">
+    <div id="loginUsersList" style="max-height:190px; overflow-y:auto; margin:10px 0;"></div>
+    <label>كلمة المرور:</label>
+    <input type="password" id="loginPasswordInput" placeholder="أدخل كلمة المرور" onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="btn" style="width:100%; justify-content:center; margin-top:14px;" onclick="doLogin()">دخول</button>
+  </div>
+
+  <!-- التطبيق الرئيسي -->
+  <div id="appView" class="hidden">
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="DASH" onclick="switchTab('DASH')">📊 لوحة المؤشرات والطلبات</button>
+      <button class="tab-btn" data-tab="SOR" onclick="openFormForNew('SOR')">📝 إصدار SOR</button>
+      <button class="tab-btn ncr-tab" data-tab="NCR" onclick="openFormForNew('NCR')">⚠️ إصدار NCR</button>
+      <button class="tab-btn let-tab" data-tab="LET" onclick="openFormForNew('LET')">✉️ إصدار خطاب رسمي (LET)</button>
+      <button class="tab-btn" data-tab="SHARED" onclick="switchTab('SHARED')">📂 المستندات المشتركة</button>
+      <button class="tab-btn" data-tab="ACCOUNT" onclick="switchTab('ACCOUNT')">👤 حسابي والتوقيع</button>
+      <button class="tab-btn admin-tab hidden" id="adminTabBtn" data-tab="ADMIN" onclick="switchTab('ADMIN')">🛡️ لوحة تحكم الأدمن</button>
+    </nav>
+
+    <div class="container">
+
+      <!-- تبويب لوحة المؤشرات والطلبات -->
+      <section id="tab-DASH">
+        <div class="kpi-grid" id="kpiGrid"></div>
+
+        <div class="card">
+          <h2>
+            <span>📋 سجل النماذج والمستندات الصادرة (SOR / NCR / LET)</span>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <select id="filterDocType" onchange="loadRequests()" style="width:auto;">
+                <option value="">كل الأنواع (الكل)</option>
+                <option value="SOR">SOR فقط</option>
+                <option value="NCR">NCR فقط</option>
+                <option value="LET">خطابات LET فقط</option>
+              </select>
+              <input type="text" id="searchReqInput" placeholder="🔍 بحث بالرقم أو الموضوع أو المهندس..." oninput="renderRequestsTable()" style="width:240px;">
+              <button class="btn btn-sm btn-outline" onclick="refreshAll()">🔄 تحديث</button>
+              <button class="btn btn-sm btn-danger hidden" id="purgeCancelledBtn" onclick="purgeCancelledRequests()">🗑️ حذف جميع الملغاة نهائياً</button>
+            </div>
+          </h2>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>النوع</th>
+                  <th>الرقم المرجعي</th>
+                  <th>القسم</th>
+                  <th>الموضوع</th>
+                  <th>المحرر</th>
+                  <th>التاريخ</th>
+                  <th>الحالة وملاحظات الاعتماد</th>
+                  <th>الإجراءات والمعاينة</th>
+                </tr>
+              </thead>
+              <tbody id="requestsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>🔢 حالة الترقيم التسلسلي للأقسام</h2>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>القسم</th>
+                  <th>المهندس المسؤول</th>
+                  <th>آخر رقم صادر (SOR)</th>
+                  <th>الرقم القادم المتوقع (SOR)</th>
+                </tr>
+              </thead>
+              <tbody id="stateCountersBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- تبويب إصدار أو تعديل نموذج (SOR / NCR / LET) -->
+      <section id="tab-FORM" class="hidden">
+        <div class="card">
+          <h2>
+            <span id="formHeaderTitle">إصدار مستند جديد</span>
+            <span id="editingModeBadge" class="badge st-returned hidden">وضع تعديل نموذج قائم</span>
+          </h2>
+          <div id="editReturnNoteAlert" class="hidden" style="background:#fff7ed; border:1px solid #fdba74; color:#9a3412; padding:12px; border-radius:8px; margin-bottom:14px;"></div>
+
+          <input type="hidden" id="formDocType" value="SOR">
+          <input type="hidden" id="editingRequestId" value="">
+
+          <div class="grid-3">
+            <div>
+              <label>القسم (Section):</label>
+              <select id="formSection"></select>
+            </div>
+            <div>
+              <label>تاريخ المستند (Date):</label>
+              <input type="date" id="formDate">
+            </div>
+            <div>
+              <label>المشروع (Project):</label>
+              <input type="text" id="formProject" value="{{ cfg.defaults.project or 'Al AWAEL Tower Project' }}">
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div>
+              <label>المقاول (Contractor):</label>
+              <input type="text" id="formContractor" value="{{ cfg.defaults.contractor or '' }}">
+            </div>
+            <div>
+              <label>صادر من (From):</label>
+              <input type="text" id="formFrom" value="{{ cfg.defaults.from or '' }}">
+            </div>
+            <div>
+              <label>نسخة إلى (Copy To):</label>
+              <input type="text" id="formCopyTo" value="{{ cfg.defaults.distribution_copy_to or '' }}">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>اسم المهندس المحرر:</label>
+              <input type="text" id="formEngineerName">
+            </div>
+            <div>
+              <label>المسمى الوظيفي للمحرر:</label>
+              <input type="text" id="formPreparedTitle">
+            </div>
+          </div>
+
+          <div>
+            <label>الموضوع (Subject):</label>
+            <input type="text" id="formSubject" placeholder="اكتب موضوع المستند بوضوح...">
+          </div>
+
+          <!-- حقول خاصة بـ NCR -->
+          <div id="ncrFieldsBlock" class="hidden" style="background:#fef2f2; padding:14px; border-radius:8px; border:1px solid #fecaca; margin-top:14px;">
+            <h3 style="margin-top:0; color:var(--ncr); font-size:15px;">بيانات تقرير عدم المطابقة (NCR Details)</h3>
+            <div class="grid-4">
+              <div>
+                <label>درجة الخطورة (Severity):</label>
+                <select id="ncrSeverity">
+                  <option value="Major">Major</option>
+                  <option value="Minor">Minor</option>
+                  <option value="Critical">Critical</option>
+                </select>
+              </div>
+              <div>
+                <label>الموقع / المنطقة (Location):</label>
+                <input type="text" id="ncrLocation" placeholder="مثال: Tower Floor 5 - Zone B">
+              </div>
+              <div>
+                <label>مرجع المواصفات / المخطط (Spec Ref):</label>
+                <input type="text" id="ncrSpecRef" placeholder="Drawing / Spec Clause">
+              </div>
+              <div>
+                <label>تاريخ الإغلاق المستهدف (Target Date):</label>
+                <input type="date" id="ncrDueDate">
+              </div>
+            </div>
+            <div class="grid-2">
+              <div>
+                <label>السبب الجذري / المخالفة المرجعية (Root Cause):</label>
+                <textarea id="ncrRootCause" rows="3"></textarea>
+              </div>
+              <div>
+                <label>الإجراء التصحيحي المطلوب (Required Corrective Action):</label>
+                <textarea id="ncrCorrectiveAction" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- حقول خاصة بالخطاب الرسمي LET -->
+          <div id="letFieldsBlock" class="hidden" style="background:#ecfdf5; padding:14px; border-radius:8px; border:1px solid #a7f3d0; margin-top:14px;">
+            <h3 style="margin-top:0; color:var(--let); font-size:15px;">بيانات الخطاب الرسمي (Official Letter Details)</h3>
+            <div class="grid-4">
+              <div>
+                <label>موجه إلى (To / Recipient):</label>
+                <input type="text" id="letRecipient" placeholder="اسم الشركة أو الجهة">
+              </div>
+              <div>
+                <label>عناية (Attention):</label>
+                <input type="text" id="letAttention" placeholder="اسم المسؤول">
+              </div>
+              <div>
+                <label>الإشارة المرجعية السابقة (Previous Ref):</label>
+                <input type="text" id="letRefPrev" placeholder="اختياري">
+              </div>
+              <div>
+                <label>لغة واتجاه نص الخطاب:</label>
+                <select id="letLang">
+                  <option value="ar">العربية (RTL)</option>
+                  <option value="en">English (LTR)</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label>المرفقات (Attachments):</label>
+              <input type="text" id="letAttachments" placeholder="عدد أو وصف المرفقات">
+            </div>
+            <div>
+              <label>نص الخطاب الرئيسي (Letter Body):</label>
+              <textarea id="letBody" rows="6" placeholder="اكتب نص الخطاب الرسمي هنا..."></textarea>
+            </div>
+          </div>
+
+          <!-- البنود والملاحظات -->
+          <div style="margin-top:14px;">
+            <label>البنود والملاحظات الفنية (كل سطر يمثل بنداً مرقماً):</label>
+            <textarea id="formItems" rows="5" placeholder="اكتب كل ملاحظة أو تعليمات في سطر مستقل..."></textarea>
+          </div>
+
+          <!-- الصور المرفقة -->
+          <div style="margin-top:14px;">
+            <label>إرفاق صور الموقع (اختياري):</label>
+            <input type="file" id="formImagesInput" accept="image/*" multiple onchange="handleFormImages(this.files)">
+            <div id="formImagesThumbs" class="thumb-grid"></div>
+          </div>
+
+          <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-preview" onclick="previewDraftForm()">👁️ معاينة النموذج قبل الإصدار</button>
+            <button class="btn" id="submitFormBtn" onclick="submitForm()">🚀 إصدار وإرسال للاعتماد</button>
+            <button class="btn btn-outline hidden" id="cancelEditBtn" onclick="cancelEditMode()">إلغاء التعديل والعودة</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- تبويب المستندات المشتركة -->
+      <section id="tab-SHARED" class="hidden">
+        <div class="card" id="sharedUploadCard">
+          <h2>📤 نشر مستند مشترك جديد (متاح لمدير المشروع والأدمن)</h2>
+          <div class="grid-3">
+            <div>
+              <label>عنوان المستند:</label>
+              <input type="text" id="shTitle" placeholder="عنوان الملف أو المنشور">
+            </div>
+            <div>
+              <label>توجيه إشعار خاص لمستخدم (اختياري):</label>
+              <select id="shTargetUser">
+                <option value="">إشعار عام لجميع المستخدمين</option>
+              </select>
+            </div>
+            <div>
+              <label>اختر الملف (PDF, Word, Excel, Image):</label>
+              <input type="file" id="shFile">
+            </div>
+          </div>
+          <div>
+            <label>وصف أو ملاحظات:</label>
+            <textarea id="shDesc" rows="2" placeholder="اكتب ملاحظات حول المستند..."></textarea>
+          </div>
+          <button class="btn" style="margin-top:12px;" onclick="uploadSharedDoc()">📤 رفع ونشر المستند</button>
+        </div>
+
+        <div class="card">
+          <h2>📂 مكتبة المستندات المشتركة والتعديلات</h2>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>العنوان</th>
+                  <th>التصنيف</th>
+                  <th>الإصدار</th>
+                  <th>الناشر</th>
+                  <th>آخر تحديث / تعليق</th>
+                  <th>السجل والتفاعل</th>
+                </tr>
+              </thead>
+              <tbody id="sharedDocsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- تبويب حسابي والتوقيع -->
+      <section id="tab-ACCOUNT" class="hidden">
+        <div class="card">
+          <h2>👤 إعدادات حسابي والتوقيع الإلكتروني</h2>
+          <div class="grid-2">
+            <div>
+              <label>البريد الإلكتروني المهني:</label>
+              <input type="email" id="accEmail" placeholder="name@company.com">
+              <label>كلمة مرور البريد (SMTP App Password - اختياري):</label>
+              <input type="password" id="accMailPw" placeholder="اتركها فارغة للإبقاء على الحالية">
+              <hr style="margin:16px 0; border:0; border-top:1px solid var(--border);">
+              <label>كلمة المرور الحالية (لتغيير كلمة مرور الدخول):</label>
+              <input type="password" id="accOldPw">
+              <label>كلمة المرور الجديدة:</label>
+              <input type="password" id="accNewPw">
+            </div>
+            <div>
+              <label>الصورة الشخصية (Avatar):</label>
+              <input type="file" accept="image/*" onchange="loadAccountImage(this, 'accAvatarPreview')">
+              <div style="margin-top:8px;">
+                <img id="accAvatarPreview" class="avatar" style="width:64px; height:64px;" src="">
+              </div>
+
+              <label style="margin-top:14px;">صورة التوقيع الإلكتروني (Signature PNG/JPG):</label>
+              <input type="file" accept="image/*" onchange="loadAccountImage(this, 'accSigPreview')">
+              <div style="margin-top:8px; border:1px dashed #94a3b8; padding:8px; border-radius:8px; background:#f8fafc; min-height:70px; display:flex; align-items:center; justify-content:center;">
+                <img id="accSigPreview" style="max-height:65px; max-width:220px; object-fit:contain;" src="">
+              </div>
+            </div>
+          </div>
+          <button class="btn" style="margin-top:16px;" onclick="saveAccountSettings()">💾 حفظ إعدادات الحساب</button>
+        </div>
+      </section>
+
+      <!-- تبويب لوحة تحكم الأدمن -->
+      <section id="tab-ADMIN" class="hidden">
+
+        <!-- إدارة المستخدمين وإعادة كلمات السر إلى 1234 وصلاحيات أحمد ماهر وأحمد الحنفي -->
+        <div class="card">
+          <h2>
+            <span>👥 إدارة المستخدمين والصلاحيات وكلمات المرور</span>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn btn-sm btn-admin" onclick="configureMaherAlhanafiLink()">🔗 تفعيل اعتماد م. أحمد الحنفي على م. أحمد ماهر</button>
+              <button class="btn btn-sm btn-gold" onclick="resetAllUsersPasswords()">🔄 استعادة كلمات سر جميع المستخدمين إلى 1234</button>
+            </div>
+          </h2>
+
+          <div class="grid-4" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid var(--border); margin-bottom:16px;">
+            <div>
+              <label>معرف المستخدم (User ID):</label>
+              <input type="text" id="admUid" placeholder="مثال: ahmed_maher">
+            </div>
+            <div>
+              <label>الاسم الكامل (Name):</label>
+              <input type="text" id="admUname" placeholder="Ahmed Maher">
+            </div>
+            <div>
+              <label>المسمى الوظيفي (Title):</label>
+              <input type="text" id="admUtitle" placeholder="Site Engineer">
+            </div>
+            <div>
+              <label>الدور (Role):</label>
+              <select id="admUrole">
+                <option value="engineer">مهندس (Engineer)</option>
+                <option value="approver">جهة اعتماد (Approver)</option>
+                <option value="admin">مدير نظام (Admin)</option>
+              </select>
+            </div>
+            <div>
+              <label>خطوة الاعتماد (Approval Step):</label>
+              <select id="admUstep">
+                <option value="">بدون (مهندس عادي)</option>
+                <option value="ah">اعتماد مبدئي إضافي (ah - م. أحمد الحنفي)</option>
+                <option value="cm">مدير الإنشاءات (cm)</option>
+                <option value="pm">مدير المشروع (pm)</option>
+                <option value="all">شامل (all - أدمن)</option>
+              </select>
+            </div>
+            <div>
+              <label>رمز القسم (Section Code):</label>
+              <input type="text" id="admUsec" placeholder="CIV / ARC / ADM">
+            </div>
+            <div>
+              <label>جهة اعتماد إضافية عليه (Extra Approver ID):</label>
+              <input type="text" id="admUextraApp" placeholder="مثال: ahmed_alhanafi">
+            </div>
+            <div>
+              <label>كلمة المرور (افتراضي 1234):</label>
+              <input type="text" id="admUpw" placeholder="1234">
+            </div>
+            <div style="grid-column: 1 / -1; display:flex; gap:8px;">
+              <button class="btn btn-admin" onclick="adminSaveUser()">➕ حفظ / تحديث بيانات المستخدم</button>
+              <button class="btn btn-outline" onclick="clearAdminUserForm()">تفريغ الحقول</button>
+            </div>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>المعرف (ID)</th>
+                  <th>الاسم</th>
+                  <th>المسمى الوظيفي</th>
+                  <th>الدور</th>
+                  <th>خطوة الاعتماد</th>
+                  <th>القسم</th>
+                  <th>جهة الاعتماد الإضافية</th>
+                  <th>إجراءات الأدمن وكلمة السر</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ضبط العدادات والشعار والقوالب -->
+        <div class="grid-2">
+          <div class="card">
+            <h2>🔢 ضبط العدادات التسلسلية (Counters)</h2>
+            <div class="grid-3">
+              <div>
+                <label>نوع المستند:</label>
+                <select id="admCntType">
+                  <option value="ALL">الكل (ALL)</option>
+                  <option value="SOR">SOR</option>
+                  <option value="NCR">NCR</option>
+                  <option value="LET">LET</option>
+                </select>
+              </div>
+              <div>
+                <label>القسم:</label>
+                <select id="admCntSec">
+                  <option value="ALL">كل الأقسام</option>
+                </select>
+              </div>
+              <div>
+                <label>القيمة الحالية للعداد:</label>
+                <input type="number" id="admCntVal" value="0" min="0">
+              </div>
+            </div>
+            <button class="btn btn-admin" style="margin-top:12px;" onclick="adminUpdateCounter()">تحديث العداد</button>
+          </div>
+
+          <div class="card">
+            <h2>🖼️ شعار المنتصف في الشريط العلوي</h2>
+            <label>رفع صورة شعار جديد:</label>
+            <input type="file" accept="image/*" onchange="adminUploadCenterLogo(this)">
+            <button class="btn btn-outline" style="margin-top:12px;" onclick="adminResetCenterLogo()">استعادة الشعار الافتراضي</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>
+            <span>🖨️ محرر قوالب الطباعة (HTML Print Templates)</span>
+            <div style="display:flex; gap:8px;">
+              <select id="admTplType" onchange="adminLoadTemplate()" style="width:auto;">
+                <option value="SOR">قالب SOR</option>
+                <option value="NCR">قالب NCR</option>
+                <option value="LET">قالب LET</option>
+              </select>
+              <button class="btn btn-sm btn-admin" onclick="adminSaveTemplate(false)">💾 حفظ القالب</button>
+              <button class="btn btn-sm btn-outline" onclick="adminSaveTemplate(true)">↩️ استعادة القالب الافتراضي</button>
+            </div>
+          </h2>
+          <textarea id="admTplHtml" rows="12" style="font-family:monospace; direction:ltr; text-align:left;"></textarea>
+        </div>
+
+      </section>
+
+    </div>
+  </div>
+
+  <!-- نافذة المعاينة المنبثقة (قبل وبعد الاعتماد) -->
+  <div id="previewModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span id="previewModalTitle">👁️ معاينة المستند</span>
+        <button class="btn btn-sm btn-danger" onclick="closePreviewModal()">✕</button>
+      </div>
+      <div class="modal-body" style="background:#e2e8f0; padding:12px;">
+        <iframe id="previewIframe" style="width:100%; height:72vh; border:none; background:#fff; border-radius:6px;"></iframe>
+      </div>
+      <div class="modal-footer" id="previewModalActions"></div>
+    </div>
+  </div>
+
+  <!-- نافذة سجل وتعديل المستند المشترك -->
+  <div id="sharedHistoryModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width:700px;">
+      <div class="modal-header">
+        <span id="shHistTitle">سجل المستند والتعديلات</span>
+        <button class="btn btn-sm btn-danger" onclick="closeSharedHistoryModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="shActiveDocId">
+        <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid var(--border); margin-bottom:14px;">
+          <h4 style="margin-top:0;">إضافة تعليق أو رفع نسخة معدلة</h4>
+          <label>ملاحظة / تعليق:</label>
+          <textarea id="shModComment" rows="2" placeholder="اكتب ملاحظتك أو وصف التعديل..."></textarea>
+          <div class="grid-2">
+            <div>
+              <label>ملف معدل (اختياري):</label>
+              <input type="file" id="shModFile">
+            </div>
+            <div>
+              <label>توجيه إشعار لمستخدم محدد (اختياري):</label>
+              <select id="shModTargetUser">
+                <option value="">صاحب المنشور</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-sm" style="margin-top:10px;" onclick="submitSharedModification()">💾 حفظ التحديث</button>
+        </div>
+        <div id="shHistoryList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة إرسال إشعار مباشر -->
+  <div id="directNotifyModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width:500px;">
+      <div class="modal-header">
+        <span>📣 إرسال إشعار أو تنبيه للمستخدمين</span>
+        <button class="btn btn-sm btn-danger" onclick="closeDirectNotifyModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <label>المستلم:</label>
+        <select id="directNotifyTarget">
+          <option value="ALL">جميع المستخدمين (إشعار عام)</option>
+        </select>
+        <label>نص الإشعار:</label>
+        <textarea id="directNotifyText" rows="4" placeholder="اكتب نص التنبيه..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="sendDirectNotification()">إرسال الإشعار</button>
+        <button class="btn btn-outline" onclick="closeDirectNotifyModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+    let sectionsList = [];
+    let directoryUsers = [];
+    let allRequests = [];
+    let formImagesData = [];
+    let accAvatarData = "";
+    let accSigData = "";
+
+    const STATUS_LABELS = {
+      pending_ah: "⏳ بانتظار اعتماد م. أحمد الحنفي",
+      pending_cm: "⏳ بانتظار مدير الإنشاءات (CM)",
+      pending_pm: "⏳ بانتظار مدير المشروع (PM)",
+      approved: "✅ معتمد",
+      completed: "🏅 مكتمل (PDF)",
+      returned: "↩️ معاد للتعديل",
+      rejected: "❌ مرفوض",
+      cancelled: "🚫 ملغى"
+    };
+
+    function renderAvatar(avatar, name, sm = false) {
+      const cls = sm ? "avatar avatar-sm" : "avatar";
+      if (avatar && avatar.startsWith("data:image/")) {
+        return `<img class="${cls}" src="${avatar}" alt="">`;
+      }
+      const initials = (name || "U").trim().slice(0, 2).toUpperCase();
+      return `<span class="${cls}">${initials}</span>`;
+    }
+
+    async function api(url, opts = {}) {
+      const res = await fetch(url, opts);
+      let data = {};
+      try { data = await res.json(); } catch (e) {}
+      if (!res.ok) throw new Error(data.error || `خطأ (${res.status})`);
+      return data;
+    }
+
+    // ------------------- تهيئة الجلسة وتسجيل الدخول -------------------
+    async function initApp() {
+      try {
+        const me = await api("/api/me");
+        onLoggedIn(me);
+      } catch (e) {
+        showLoginScreen();
+      }
+    }
+
+    async function showLoginScreen() {
+      document.getElementById("appView").classList.add("hidden");
+      document.getElementById("topbarUserArea").style.display = "none";
+      document.getElementById("loginView").classList.remove("hidden");
+      try {
+        const users = await api("/api/login-users");
+        const box = document.getElementById("loginUsersList");
+        box.innerHTML = users.map(u => `
+          <div class="user-chip" onclick="selectLoginUser('${u.id}', this)">
+            ${renderAvatar(u.avatar, u.name, true)}
+            <div>
+              <div style="font-weight:bold; font-size:13px;">${u.name}</div>
+              <div style="font-size:11.5px; color:#64748b;">${u.title} (@${u.id})</div>
+            </div>
+          </div>
+        `).join("");
+      } catch (e) {}
+    }
+
+    function selectLoginUser(uid, el) {
+      document.querySelectorAll(".user-chip").forEach(c => c.classList.remove("selected"));
+      el.classList.add("selected");
+      document.getElementById("loginUserInput").value = uid;
+      document.getElementById("loginPasswordInput").focus();
+    }
+
+    async function doLogin() {
+      const user = document.getElementById("loginUserInput").value.trim();
+      const password = document.getElementById("loginPasswordInput").value;
+      if (!user || !password) return alert("يرجى إدخال اسم المستخدم وكلمة المرور");
+      try {
+        await api("/api/login", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({user, password})
+        });
+        const me = await api("/api/me");
+        onLoggedIn(me);
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function doLogout() {
+      await api("/api/logout", {method: "POST"});
+      location.reload();
+    }
+
+    async function onLoggedIn(me) {
+      currentUser = me.user;
+      sectionsList = me.sections || [];
+      document.getElementById("loginView").classList.add("hidden");
+      document.getElementById("appView").classList.remove("hidden");
+      document.getElementById("topbarUserArea").style.display = "flex";
+      document.getElementById("currentUserAvatar").innerHTML = renderAvatar(currentUser.avatar, currentUser.name);
+      document.getElementById("currentUserName").textContent = `${currentUser.name} (${currentUser.title})`;
+
+      if (me.center_logo) {
+        document.getElementById("topCenterLogoImg").src = me.center_logo;
+        document.getElementById("topCenterLogoBox").style.display = "flex";
+      }
+
+      const isAdmin = currentUser.role === "admin";
+      document.getElementById("adminTabBtn").classList.toggle("hidden", !isAdmin);
+      document.getElementById("purgeCancelledBtn").classList.toggle("hidden", !isAdmin);
+      document.getElementById("sharedUploadCard").classList.toggle("hidden", !currentUser.can_upload_shared);
+
+      populateSectionsSelect();
+      await loadUsersDirectory();
+      await refreshAll();
+      loadNotifications();
+
+      const params = new URLSearchParams(location.search);
+      if (params.get("request")) {
+        previewExistingRequest(parseInt(params.get("request"), 10));
+      }
+    }
+
+    function populateSectionsSelect() {
+      const sel = document.getElementById("formSection");
+      const admSec = document.getElementById("admCntSec");
+      sel.innerHTML = sectionsList.map(s => `<option value="${s.code}">${s.code} — ${s.name} (${s.engineer})</option>`).join("");
+      admSec.innerHTML = `<option value="ALL">كل الأقسام</option>` + sectionsList.map(s => `<option value="${s.code}">${s.code} — ${s.name}</option>`).join("");
+      if (currentUser.role === "engineer") {
+        sel.value = currentUser.section;
+        sel.disabled = true;
+      } else {
+        sel.disabled = false;
+      }
+    }
+
+    async function loadUsersDirectory() {
+      try {
+        directoryUsers = await api("/api/users-directory");
+        const opts = directoryUsers.map(u => `<option value="${u.id}">${u.name} (${u.title})</option>`).join("");
+        document.getElementById("shTargetUser").innerHTML = `<option value="">إشعار عام لجميع المستخدمين</option>` + opts;
+        document.getElementById("shModTargetUser").innerHTML = `<option value="">صاحب المنشور</option>` + opts;
+        document.getElementById("directNotifyTarget").innerHTML = `<option value="ALL">جميع المستخدمين (إشعار عام)</option>` + opts;
+      } catch (e) {}
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll(".nav-tabs .tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+      ["DASH", "FORM", "SHARED", "ACCOUNT", "ADMIN"].forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        if (el) el.classList.toggle("hidden", t !== tab && !(t === "FORM" && ["SOR", "NCR", "LET"].includes(tab)));
+      });
+      if (tab === "DASH") refreshAll();
+      if (tab === "SHARED") loadSharedDocs();
+      if (tab === "ACCOUNT") fillAccountTab();
+      if (tab === "ADMIN") {
+        adminLoadUsers();
+        adminLoadTemplate();
+      }
+    }
+
+    async function refreshAll() {
+      await Promise.all([loadDashboard(), loadRequests(), loadStateCounters()]);
+    }
+
+    // ------------------- لوحة المؤشرات والعدادات -------------------
+    async function loadDashboard() {
+      try {
+        const d = await api("/api/dashboard");
+        const st = d.by_status || {};
+        const bt = d.by_type || {};
+        document.getElementById("kpiGrid").innerHTML = `
+          <div class="kpi-card"><h4>إجمالي النماذج النشطة</h4><div class="num">${d.total_active || 0}</div></div>
+          <div class="kpi-card" style="border-color:var(--accent);"><h4>تقارير SOR</h4><div class="num">${bt.SOR || 0}</div></div>
+          <div class="kpi-card" style="border-color:var(--ncr);"><h4>تقارير NCR</h4><div class="num">${bt.NCR || 0}</div></div>
+          <div class="kpi-card" style="border-color:var(--let);"><h4>خطابات LET</h4><div class="num">${bt.LET || 0}</div></div>
+          <div class="kpi-card" style="border-color:#d97706;"><h4>بانتظار م. أحمد الحنفي</h4><div class="num">${st.pending_ah || 0}</div></div>
+          <div class="kpi-card" style="border-color:#2563eb;"><h4>بانتظار CM / PM</h4><div class="num">${(st.pending_cm || 0) + (st.pending_pm || 0)}</div></div>
+          <div class="kpi-card" style="border-color:#ea580c;"><h4>معاد للتعديل</h4><div class="num">${st.returned || 0}</div></div>
+          <div class="kpi-card" style="border-color:#16a34a;"><h4>معتمد ومكتمل</h4><div class="num">${(st.approved || 0) + (st.completed || 0)}</div></div>
+        `;
+      } catch (e) {}
+    }
+
+    async function loadStateCounters() {
+      try {
+        const rows = await api("/api/state?doc_type=SOR");
+        document.getElementById("stateCountersBody").innerHTML = rows.map(r => `
+          <tr>
+            <td><strong>${r.code}</strong> — ${r.name}</td>
+            <td>${r.engineer}</td>
+            <td><span class="badge st-pending_cm">${r.last_text}</span></td>
+            <td><strong>${r.next_text}</strong></td>
+          </tr>
+        `).join("");
+      } catch (e) {}
+    }
+
+    // ------------------- قائمة الطلبات والإجراءات (المعاينة، الإعادة، التعديل، الاعتماد) -------------------
+    async function loadRequests() {
+      try {
+        const dt = document.getElementById("filterDocType").value;
+        allRequests = await api(`/api/requests${dt ? `?doc_type=${dt}` : ""}`);
+        renderRequestsTable();
+      } catch (e) {}
+    }
+
+    function renderRequestsTable() {
+      const q = (document.getElementById("searchReqInput").value || "").trim().toLowerCase();
+      const filtered = allRequests.filter(r => {
+        if (!q) return true;
+        return (r.number || "").toLowerCase().includes(q) ||
+               (r.subject || "").toLowerCase().includes(q) ||
+               (r.creator || "").toLowerCase().includes(q) ||
+               (r.section || "").toLowerCase().includes(q);
+      });
+
+      const tbody = document.getElementById("requestsTableBody");
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:20px; color:#64748b;">لا توجد نماذج مطابقة</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(r => {
+        const stLabel = STATUS_LABELS[r.status] || r.status;
+        const noteText = r.return_reason || r.reject_reason || r.cancel_reason || "";
+        const noteHtml = noteText ? `<div style="font-size:11.5px; color:#9a3412; margin-top:4px; background:#fff7ed; padding:3px 6px; border-radius:4px;">📌 ${noteText}</div>` : "";
+
+        let actions = [];
+        // 1. معاينة النموذج قبل وبعد الاعتماد (للمستخدمين وجهات الاعتماد والأدمن)
+        if (r.can_preview) {
+          actions.push(`<button class="btn btn-sm btn-preview" onclick="previewExistingRequest(${r.id})" title="معاينة النموذج">👁️ معاينة</button>`);
+        }
+        // 2. اعتماد النموذج (لـ أحمد الحنفي، CM، PM، والأدمن)
+        if (r.can_approve) {
+          actions.push(`<button class="btn btn-sm btn-let" onclick="approveRequest(${r.id})">✅ اعتماد</button>`);
+        }
+        // 3. إعادة النموذج للتعديل (لجهات الاعتماد والأدمن)
+        if (r.can_return) {
+          actions.push(`<button class="btn btn-sm btn-warn" onclick="returnRequestForEdit(${r.id})">↩️ إعادة للتعديل</button>`);
+        }
+        // 4. رفض النموذج
+        if (r.can_approve) {
+          actions.push(`<button class="btn btn-sm btn-danger" onclick="rejectRequest(${r.id})">❌ رفض</button>`);
+        }
+        // 5. تعديل النموذج وإعادة الإرسال (لمحرر النموذج عند الإعادة/الرفض، وللأدمن دائماً)
+        if (r.can_edit) {
+          actions.push(`<button class="btn btn-sm" onclick="openFormForEdit(${r.id})">✏️ تعديل</button>`);
+        }
+        // 6. تحميل PDF وإرسال بريد
+        if (r.can_download || r.can_pdf) {
+          actions.push(`<a class="btn btn-sm btn-outline" href="/api/pdf/${r.id}" target="_blank">📥 PDF</a>`);
+        }
+        if (r.can_email) {
+          actions.push(`<button class="btn btn-sm btn-outline" onclick="emailRequestPdf(${r.id}, '${r.creator_email || ''}')">📧 بريد</button>`);
+        }
+        // 7. إلغاء وحذف نهائي (للأدمن)
+        if (r.can_cancel) {
+          actions.push(`<button class="btn btn-sm btn-outline" onclick="cancelRequest(${r.id})">🚫 إلغاء</button>`);
+        }
+        if (r.can_delete) {
+          actions.push(`<button class="btn btn-sm btn-danger" onclick="deleteRequestPermanently(${r.id})">🗑️</button>`);
+        }
+
+        return `
+          <tr>
+            <td>${r.id}</td>
+            <td><span class="dt-badge dt-${r.doc_type}">${r.doc_type}</span></td>
+            <td><strong>${r.number}</strong></td>
+            <td>${r.section}</td>
+            <td style="max-width:260px;">${r.subject}</td>
+            <td>${renderAvatar(r.creator_avatar, r.creator, true)} ${r.creator || r.created_by}</td>
+            <td>${r.doc_date || ""}</td>
+            <td><span class="badge st-${r.status}">${stLabel}</span>${noteHtml}</td>
+            <td><div style="display:flex; gap:4px; flex-wrap:wrap;">${actions.join("")}</div></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // ------------------- المعاينة قبل وبعد الاعتماد -------------------
+    async function previewExistingRequest(id) {
+      try {
+        const d = await api(`/api/requests/${id}/preview`);
+        document.getElementById("previewModalTitle").textContent = `👁️ معاينة المستند: ${d.number} — ${d.subject || ""}`;
+        const iframe = document.getElementById("previewIframe");
+        iframe.contentWindow.document.open();
+        iframe.contentWindow.document.write(d.html);
+        iframe.contentWindow.document.close();
+
+        let footerBtns = `
+          <button class="btn btn-preview" onclick="window.open('/api/requests/${id}/preview-pdf', '_blank')">📄 فتح كملف PDF / طباعة</button>
+        `;
+        if (d.can_approve) {
+          footerBtns += `<button class="btn btn-let" onclick="closePreviewModal(); approveRequest(${id});">✅ اعتماد المستند</button>`;
+        }
+        if (d.can_return) {
+          footerBtns += `<button class="btn btn-warn" onclick="closePreviewModal(); returnRequestForEdit(${id});">↩️ إعادة للتعديل</button>`;
+        }
+        if (d.can_edit) {
+          footerBtns += `<button class="btn" onclick="closePreviewModal(); openFormForEdit(${id});">✏️ تعديل النموذج</button>`;
+        }
+        footerBtns += `<button class="btn btn-outline" onclick="closePreviewModal()">إغلاق</button>`;
+        document.getElementById("previewModalActions").innerHTML = footerBtns;
+        document.getElementById("previewModal").classList.add("show");
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    function closePreviewModal() {
+      document.getElementById("previewModal").classList.remove("show");
+    }
+
+    // ------------------- الاعتماد، الإعادة للتعديل، الرفض، الإلغاء -------------------
+    async function approveRequest(id) {
+      const comment = prompt("ملاحظات الاعتماد (اختياري):", "") || "";
+      try {
+        await api(`/api/requests/${id}/approve`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({comment})
+        });
+        await refreshAll();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function returnRequestForEdit(id) {
+      const reason = prompt("اكتب ملاحظات التعديل لإعادة النموذج إلى المحرر:");
+      if (reason === null) return;
+      if (!reason.trim()) return alert("يرجى كتابة ملاحظات التعديل");
+      try {
+        await api(`/api/requests/${id}/return`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({reason: reason.trim()})
+        });
+        alert("تمت إعادة النموذج للتعديل وإرسال إشعار لمحرر النموذج.");
+        await refreshAll();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function rejectRequest(id) {
+      const reason = prompt("اكتب سبب رفض النموذج:");
+      if (reason === null) return;
+      if (!reason.trim()) return alert("يرجى كتابة سبب الرفض");
+      try {
+        await api(`/api/requests/${id}/reject`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({reason: reason.trim()})
+        });
+        await refreshAll();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function cancelRequest(id) {
+      const reason = prompt("سبب إلغاء المستند:");
+      if (reason === null) return;
+      try {
+        await api(`/api/requests/${id}/cancel`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({reason})
+        });
+        await refreshAll();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function deleteRequestPermanently(id) {
+      if (!confirm("هل أنت متأكد من الحذف النهائي لهذا النموذج؟")) return;
+      try {
+        await api(`/api/requests/${id}`, {method: "DELETE"});
+        await refreshAll();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function purgeCancelledRequests() {
+      if (!confirm("هل تريد حذف جميع النماذج الملغاة نهائياً؟")) return;
+      try {
+        const res = await api("/api/admin/requests/cancelled", {method: "DELETE"});
+        alert(`تم حذف (${res.deleted_count}) نموذج ملغى نهائياً`);
+        await refreshAll();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function emailRequestPdf(id, defaultEmail) {
+      const email = prompt("أدخل البريد الإلكتروني للمستلم:", defaultEmail || "");
+      if (!email) return;
+      try {
+        const res = await api(`/api/requests/${id}/email`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({email})
+        });
+        alert(`تم الإرسال بنجاح إلى: ${res.sent_to}`);
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    // ------------------- إصدار نموذج جديد أو تعديل نموذج قائم -------------------
+    function openFormForNew(dtype) {
+      document.getElementById("editingRequestId").value = "";
+      document.getElementById("editingModeBadge").classList.add("hidden");
+      document.getElementById("cancelEditBtn").classList.add("hidden");
+      document.getElementById("editReturnNoteAlert").classList.add("hidden");
+
+      document.getElementById("formDocType").value = dtype;
+      const titles = {
+        SOR: "📝 إصدار تقرير ملاحظات موقع جديد (SOR)",
+        NCR: "⚠️ إصدار تقرير عدم مطابقة جديد (NCR)",
+        LET: "✉️ إصدار خطاب رسمي جديد (Official Letter)"
+      };
+      document.getElementById("formHeaderTitle").textContent = titles[dtype] || "إصدار مستند";
+      document.getElementById("submitFormBtn").textContent = "🚀 إصدار وإرسال للاعتماد";
+
+      document.getElementById("ncrFieldsBlock").classList.toggle("hidden", dtype !== "NCR");
+      document.getElementById("letFieldsBlock").classList.toggle("hidden", dtype !== "LET");
+
+      document.getElementById("formDate").value = new Date().toISOString().slice(0, 10);
+      document.getElementById("formEngineerName").value = currentUser.name || "";
+      document.getElementById("formPreparedTitle").value = currentUser.title || "";
+      document.getElementById("formSubject").value = "";
+      document.getElementById("formItems").value = "";
+      formImagesData = [];
+      renderFormImageThumbs();
+
+      switchTab(dtype);
+    }
+
+    async function openFormForEdit(reqId) {
+      try {
+        const r = await api(`/api/requests/${reqId}`);
+        const p = r.payload || {};
+        const dtype = r.doc_type || "SOR";
+
+        document.getElementById("editingRequestId").value = r.id;
+        document.getElementById("formDocType").value = dtype;
+        document.getElementById("editingModeBadge").classList.remove("hidden");
+        document.getElementById("cancelEditBtn").classList.remove("hidden");
+        document.getElementById("formHeaderTitle").textContent = `✏️ تعديل النموذج: ${r.number} (${dtype})`;
+        document.getElementById("submitFormBtn").textContent = "💾 حفظ التعديلات وإعادة الإرسال للاعتماد";
+
+        const note = r.return_reason || r.reject_reason || "";
+        const noteEl = document.getElementById("editReturnNoteAlert");
+        if (note) {
+          noteEl.innerHTML = `<strong>📌 ملاحظات جهة الاعتماد للتعديل:</strong> ${note}`;
+          noteEl.classList.remove("hidden");
+        } else {
+          noteEl.classList.add("hidden");
+        }
+
+        document.getElementById("ncrFieldsBlock").classList.toggle("hidden", dtype !== "NCR");
+        document.getElementById("letFieldsBlock").classList.toggle("hidden", dtype !== "LET");
+
+        document.getElementById("formSection").value = r.section;
+        document.getElementById("formDate").value = (r.doc_date || p.date || "").slice(0, 10);
+        document.getElementById("formProject").value = p.project || "Al AWAEL Tower Project";
+        document.getElementById("formContractor").value = p.contractor || "";
+        document.getElementById("formFrom").value = p.from || "";
+        document.getElementById("formCopyTo").value = p.copy_to || "";
+        document.getElementById("formEngineerName").value = p.engineer_name || "";
+        document.getElementById("formPreparedTitle").value = p.prepared_by_title || "";
+        document.getElementById("formSubject").value = r.subject || p.subject || "";
+        document.getElementById("formItems").value = (p.items || []).join("\n");
+
+        document.getElementById("ncrSeverity").value = p.ncr_severity || "Major";
+        document.getElementById("ncrLocation").value = p.ncr_location || "";
+        document.getElementById("ncrSpecRef").value = p.ncr_spec_ref || "";
+        document.getElementById("ncrDueDate").value = p.ncr_due_date || "";
+        document.getElementById("ncrRootCause").value = p.ncr_root_cause || "";
+        document.getElementById("ncrCorrectiveAction").value = p.ncr_corrective_action || "";
+
+        document.getElementById("letRecipient").value = p.let_recipient || "";
+        document.getElementById("letAttention").value = p.let_attention || "";
+        document.getElementById("letRefPrev").value = p.let_ref_prev || "";
+        document.getElementById("letLang").value = p.let_lang || "ar";
+        document.getElementById("letAttachments").value = p.let_attachments || "";
+        document.getElementById("letBody").value = p.let_body || "";
+
+        formImagesData = Array.isArray(p.images) ? [...p.images] : [];
+        renderFormImageThumbs();
+
+        document.querySelectorAll(".nav-tabs .tab-btn").forEach(b => b.classList.remove("active"));
+        ["DASH", "SHARED", "ACCOUNT", "ADMIN"].forEach(t => document.getElementById(`tab-${t}`).classList.add("hidden"));
+        document.getElementById("tab-FORM").classList.remove("hidden");
+        window.scrollTo({top: 0, behavior: "smooth"});
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    function cancelEditMode() {
+      document.getElementById("editingRequestId").value = "";
+      switchTab("DASH");
+    }
+
+    function handleFormImages(files) {
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          formImagesData.push(e.target.result);
+          renderFormImageThumbs();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderFormImageThumbs() {
+      const box = document.getElementById("formImagesThumbs");
+      box.innerHTML = formImagesData.map((src, idx) => `
+        <div class="thumb-box">
+          <img src="${src}">
+          <button type="button" class="thumb-del" onclick="removeFormImage(${idx})">✕</button>
+        </div>
+      `).join("");
+    }
+
+    function removeFormImage(idx) {
+      formImagesData.splice(idx, 1);
+      renderFormImageThumbs();
+    }
+
+    function collectFormData() {
+      const items = document.getElementById("formItems").value
+        .split("\n")
+        .map(s => s.trim())
+        .filter(Boolean);
+      return {
+        doc_type: document.getElementById("formDocType").value,
+        section: document.getElementById("formSection").value,
+        date: document.getElementById("formDate").value,
+        project: document.getElementById("formProject").value,
+        contractor: document.getElementById("formContractor").value,
+        from: document.getElementById("formFrom").value,
+        copy_to: document.getElementById("formCopyTo").value,
+        engineer_name: document.getElementById("formEngineerName").value,
+        prepared_by_title: document.getElementById("formPreparedTitle").value,
+        subject: document.getElementById("formSubject").value.trim(),
+        items,
+        images: formImagesData,
+        ncr_severity: document.getElementById("ncrSeverity").value,
+        ncr_location: document.getElementById("ncrLocation").value,
+        ncr_spec_ref: document.getElementById("ncrSpecRef").value,
+        ncr_due_date: document.getElementById("ncrDueDate").value,
+        ncr_root_cause: document.getElementById("ncrRootCause").value,
+        ncr_corrective_action: document.getElementById("ncrCorrectiveAction").value,
+        let_recipient: document.getElementById("letRecipient").value,
+        let_attention: document.getElementById("letAttention").value,
+        let_ref_prev: document.getElementById("letRefPrev").value,
+        let_lang: document.getElementById("letLang").value,
+        let_attachments: document.getElementById("letAttachments").value,
+        let_body: document.getElementById("letBody").value
+      };
+    }
+
+    async function previewDraftForm() {
+      const payload = collectFormData();
+      try {
+        const res = await api("/api/preview", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(payload)
+        });
+        document.getElementById("previewModalTitle").textContent = `👁️ معاينة مسودة قبل الإصدار (${res.expected_number})`;
+        const iframe = document.getElementById("previewIframe");
+        iframe.contentWindow.document.open();
+        iframe.contentWindow.document.write(res.html);
+        iframe.contentWindow.document.close();
+        document.getElementById("previewModalActions").innerHTML = `
+          <button class="btn" onclick="closePreviewModal(); submitForm();">🚀 اعتماد وإصدار النموذج الآن</button>
+          <button class="btn btn-outline" onclick="closePreviewModal()">إغلاق المعاينة</button>
+        `;
+        document.getElementById("previewModal").classList.add("show");
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function submitForm() {
+      const payload = collectFormData();
+      if (!payload.subject) return alert("يرجى كتابة موضوع المستند (Subject)");
+      const editId = document.getElementById("editingRequestId").value;
+
+      try {
+        if (editId) {
+          const res = await api(`/api/requests/${editId}`, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+          });
+          alert(`تم حفظ التعديلات وإعادة إرسال النموذج (${res.number}) بنجاح!`);
+        } else {
+          const res = await api("/api/requests", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+          });
+          alert(`تم إصدار المستند بنجاح برقم: ${res.number}`);
+        }
+        document.getElementById("editingRequestId").value = "";
+        switchTab("DASH");
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    // ------------------- المستندات المشتركة -------------------
+    async function loadSharedDocs() {
+      try {
+        const docs = await api("/api/shared-docs");
+        const tbody = document.getElementById("sharedDocsBody");
+        if (!docs.length) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:18px; color:#64748b;">لا توجد مستندات مشتركة حالياً</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = docs.map(d => `
+          <tr>
+            <td>
+              <strong>${d.title}</strong>
+              ${d.description ? `<div style="font-size:12px; color:#64748b;">${d.description}</div>` : ""}
+            </td>
+            <td><span class="badge st-pending_cm">${d.category} (${d.file_ext})</span></td>
+            <td><strong>v${d.version}</strong></td>
+            <td>${renderAvatar(d.uploader_avatar, d.uploaded_by_name, true)} ${d.uploaded_by_name}<br><small>${d.uploaded_at}</small></td>
+            <td>${renderAvatar(d.modifier_avatar, d.last_modified_by_name, true)} ${d.last_modified_by_name}<br><small>${d.last_modified_at}</small></td>
+            <td>
+              <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                <a class="btn btn-sm btn-outline" href="/api/shared-docs/file/${encodeURIComponent(d.stored_name)}?inline=1" target="_blank">👁️ عرض</a>
+                <a class="btn btn-sm btn-outline" href="/api/shared-docs/file/${encodeURIComponent(d.stored_name)}">📥 تحميل</a>
+                <button class="btn btn-sm" onclick="openSharedHistoryModal(${d.id})">💬 السجل والتعديل (${d.comments_count})</button>
+                ${d.can_delete ? `<button class="btn btn-sm btn-danger" onclick="deleteSharedDoc(${d.id})">🗑️</button>` : ""}
+              </div>
+            </td>
+          </tr>
+        `).join("");
+      } catch (e) {}
+    }
+
+    async function uploadSharedDoc() {
+      const f = document.getElementById("shFile").files[0];
+      if (!f) return alert("يرجى اختيار ملف للرفع");
+      const fd = new FormData();
+      fd.append("title", document.getElementById("shTitle").value.trim());
+      fd.append("description", document.getElementById("shDesc").value.trim());
+      fd.append("target_user_id", document.getElementById("shTargetUser").value);
+      fd.append("file", f);
+      try {
+        await api("/api/shared-docs", {method: "POST", body: fd});
+        document.getElementById("shTitle").value = "";
+        document.getElementById("shDesc").value = "";
+        document.getElementById("shFile").value = "";
+        loadSharedDocs();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function openSharedHistoryModal(docId) {
+      document.getElementById("shActiveDocId").value = docId;
+      try {
+        const res = await api(`/api/shared-docs/${docId}/history`);
+        document.getElementById("shHistTitle").textContent = `سجل المستند: ${res.doc.title} (الإصدار v${res.doc.version})`;
+        document.getElementById("shHistoryList").innerHTML = res.history.map(h => `
+          <div style="border-bottom:1px solid var(--border); padding:10px 0;">
+            <div style="display:flex; justify-content:space-between;">
+              <strong>${renderAvatar(h.user_avatar, h.user_name, true)} ${h.user_name} (${h.user_title || ""})</strong>
+              <span style="font-size:12px; color:#64748b;">v${h.version} — ${h.created_at}</span>
+            </div>
+            <div style="margin-top:6px;">${h.comment || ""}</div>
+            ${h.stored_name ? `<div style="margin-top:4px;"><a href="/api/shared-docs/file/${encodeURIComponent(h.stored_name)}" style="font-size:12px; color:var(--accent);">📥 تحميل نسخة هذا الإصدار</a></div>` : ""}
+          </div>
+        `).join("");
+        document.getElementById("sharedHistoryModal").classList.add("show");
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    function closeSharedHistoryModal() {
+      document.getElementById("sharedHistoryModal").classList.remove("show");
+    }
+
+    async function submitSharedModification() {
+      const docId = document.getElementById("shActiveDocId").value;
+      const fd = new FormData();
+      fd.append("comment", document.getElementById("shModComment").value.trim());
+      fd.append("target_user_id", document.getElementById("shModTargetUser").value);
+      const f = document.getElementById("shModFile").files[0];
+      if (f) fd.append("file", f);
+      try {
+        await api(`/api/shared-docs/${docId}/modify`, {method: "POST", body: fd});
+        document.getElementById("shModComment").value = "";
+        document.getElementById("shModFile").value = "";
+        openSharedHistoryModal(docId);
+        loadSharedDocs();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function deleteSharedDoc(docId) {
+      if (!confirm("هل أنت متأكد من حذف هذا المنشور وملفاته؟")) return;
+      try {
+        await api(`/api/shared-docs/${docId}`, {method: "DELETE"});
+        loadSharedDocs();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    // ------------------- الإشعارات -------------------
+    async function loadNotifications() {
+      try {
+        const d = await api("/api/notifications");
+        const badge = document.getElementById("notifBadge");
+        if (d.unread > 0) {
+          badge.textContent = d.unread;
+          badge.classList.remove("hidden");
+        } else {
+          badge.classList.add("hidden");
+        }
+        const list = document.getElementById("notifList");
+        if (!d.notifications.length) {
+          list.innerHTML = `<div style="padding:16px; text-align:center; color:#64748b;">لا توجد إشعارات</div>`;
+          return;
+        }
+        list.innerHTML = d.notifications.map(n => `
+          <div class="notif-item ${n.is_read ? '' : 'unread'}" onclick="onNotifClick(${n.request_id})">
+            <div>${n.message}</div>
+            <div style="font-size:11px; color:#64748b; margin-top:4px;">${n.created_at}</div>
+          </div>
+        `).join("");
+      } catch (e) {}
+    }
+
+    function toggleNotifDropdown() {
+      document.getElementById("notifDropdown").classList.toggle("hidden");
+    }
+
+    async function markAllNotifRead() {
+      await api("/api/notifications/read", {method: "POST"});
+      loadNotifications();
+    }
+
+    function onNotifClick(reqId) {
+      document.getElementById("notifDropdown").classList.add("hidden");
+      markAllNotifRead();
+      if (reqId > 0) {
+        previewExistingRequest(reqId);
+      } else if (reqId < 0) {
+        switchTab("SHARED");
+        openSharedHistoryModal(Math.abs(reqId));
+      }
+    }
+
+    function openDirectNotifyModal() {
+      document.getElementById("directNotifyModal").classList.add("show");
+    }
+
+    function closeDirectNotifyModal() {
+      document.getElementById("directNotifyModal").classList.remove("show");
+    }
+
+    async function sendDirectNotification() {
+      const target_user_id = document.getElementById("directNotifyTarget").value;
+      const message = document.getElementById("directNotifyText").value.trim();
+      if (!message) return alert("يرجى كتابة نص الإشعار");
+      try {
+        const res = await api("/api/notifications/send", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({target_user_id, message})
+        });
+        alert(`تم إرسال الإشعار إلى (${res.count}) مستخدم بنجاح`);
+        document.getElementById("directNotifyText").value = "";
+        closeDirectNotifyModal();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    // ------------------- إعدادات حسابي -------------------
+    function fillAccountTab() {
+      document.getElementById("accEmail").value = currentUser.email || "";
+      document.getElementById("accAvatarPreview").src = currentUser.avatar || "";
+      accAvatarData = "";
+      accSigData = "";
+    }
+
+    function loadAccountImage(input, previewId) {
+      const f = input.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById(previewId).src = e.target.result;
+        if (previewId === "accAvatarPreview") accAvatarData = e.target.result;
+        if (previewId === "accSigPreview") accSigData = e.target.result;
+      };
+      reader.readAsDataURL(f);
+    }
+
+    async function saveAccountSettings() {
+      const payload = {
+        email: document.getElementById("accEmail").value.trim(),
+        mail_password: document.getElementById("accMailPw").value,
+        old_password: document.getElementById("accOldPw").value,
+        new_password: document.getElementById("accNewPw").value
+      };
+      if (accAvatarData) payload.avatar = accAvatarData;
+      if (accSigData) payload.signature = accSigData;
+      try {
+        const res = await api("/api/account", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(payload)
+        });
+        currentUser = res.user;
+        document.getElementById("currentUserAvatar").innerHTML = renderAvatar(currentUser.avatar, currentUser.name);
+        document.getElementById("accOldPw").value = "";
+        document.getElementById("accNewPw").value = "";
+        alert("تم حفظ إعدادات الحساب بنجاح");
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    // ------------------- لوحة تحكم الأدمن (المستخدمين، كلمات السر 1234، أحمد ماهر وأحمد الحنفي) -------------------
+    let adminUsersCache = [];
+
+    async function adminLoadUsers() {
+      try {
+        const d = await api("/api/admin/users");
+        adminUsersCache = d.users || [];
+        const tbody = document.getElementById("adminUsersTableBody");
+        tbody.innerHTML = adminUsersCache.map(u => `
+          <tr>
+            <td><strong>${u.id}</strong></td>
+            <td>${renderAvatar(u.avatar, u.name, true)} ${u.name}</td>
+            <td>${u.title}</td>
+            <td><span class="badge st-pending_cm">${u.role}</span></td>
+            <td>${u.step ? `<span class="badge st-pending_ah">${u.step}</span>` : "—"}</td>
+            <td>${u.section || ""}</td>
+            <td>${u.extra_approver_id ? `<span class="badge st-returned">يعتمد من: ${u.extra_approver_id}</span>` : "—"}</td>
+            <td>
+              <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                <button class="btn btn-sm btn-outline" onclick="adminFillUserForEdit('${u.id}')">✏️ تعديل</button>
+                <button class="btn btn-sm btn-gold" onclick="adminResetSinglePassword('${u.id}', '${(u.name || '').replace(/'/g, '')}')" title="إعادة كلمة السر إلى 1234">🔑 تصفير (1234)</button>
+                ${u.id !== 'admin' ? `<button class="btn btn-sm btn-danger" onclick="adminDeleteUser('${u.id}')">🗑️</button>` : ""}
+              </div>
+            </td>
+          </tr>
+        `).join("");
+      } catch (e) {}
+    }
+
+    function adminFillUserForEdit(uid) {
+      const u = adminUsersCache.find(x => x.id === uid);
+      if (!u) return;
+      document.getElementById("admUid").value = u.id;
+      document.getElementById("admUname").value = u.name || "";
+      document.getElementById("admUtitle").value = u.title || "";
+      document.getElementById("admUrole").value = u.role || "engineer";
+      document.getElementById("admUstep").value = u.step || "";
+      document.getElementById("admUsec").value = u.section || "ADM";
+      document.getElementById("admUextraApp").value = u.extra_approver_id || "";
+      document.getElementById("admUpw").value = "";
+    }
+
+    function clearAdminUserForm() {
+      ["admUid", "admUname", "admUtitle", "admUsec", "admUextraApp", "admUpw"].forEach(id => document.getElementById(id).value = "");
+      document.getElementById("admUrole").value = "engineer";
+      document.getElementById("admUstep").value = "";
+    }
+
+    async function adminSaveUser() {
+      const payload = {
+        id: document.getElementById("admUid").value.trim(),
+        name: document.getElementById("admUname").value.trim(),
+        title: document.getElementById("admUtitle").value.trim(),
+        role: document.getElementById("admUrole").value,
+        step: document.getElementById("admUstep").value,
+        section: document.getElementById("admUsec").value.trim() || "ADM",
+        extra_approver_id: document.getElementById("admUextraApp").value.trim(),
+        password: document.getElementById("admUpw").value.trim()
+      };
+      if (!payload.id || !payload.name || !payload.title) {
+        return alert("يرجى تعبئة معرف المستخدم، الاسم، والمسمى الوظيفي");
+      }
+      try {
+        await api("/api/admin/users", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(payload)
+        });
+        alert("تم حفظ بيانات المستخدم بنجاح");
+        clearAdminUserForm();
+        adminLoadUsers();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    // تفعيل ربط أحمد ماهر بـ أحمد الحنفي كجهة اعتماد إضافية بضغطة واحدة
+    async function configureMaherAlhanafiLink() {
+      try {
+        const alhanafi = adminUsersCache.find(u => u.id.toLowerCase().includes("hanafi") || (u.name || "").toLowerCase().includes("hanafi") || (u.name || "").includes("الحنفي"));
+        const maher = adminUsersCache.find(u => u.id.toLowerCase().includes("maher") || (u.name || "").toLowerCase().includes("maher") || (u.name || "").includes("ماهر"));
+
+        const ahId = alhanafi ? alhanafi.id : "ahmed_alhanafi";
+        await api("/api/admin/users", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            id: ahId,
+            name: alhanafi ? alhanafi.name : "Ahmed Alhanafi",
+            title: alhanafi ? alhanafi.title : "Approval Engineer",
+            role: "approver",
+            step: "ah",
+            section: alhanafi ? alhanafi.section : "ADM"
+          })
+        });
+
+        const maherId = maher ? maher.id : "ahmed_maher";
+        await api("/api/admin/users", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            id: maherId,
+            name: maher ? maher.name : "Ahmed Maher",
+            title: maher ? maher.title : "Site Engineer",
+            role: "engineer",
+            step: "",
+            section: maher ? maher.section : (sectionsList[0]?.code || "ADM"),
+            extra_approver_id: ahId
+          })
+        });
+
+        alert(`تم بنجاح ضبط (${ahId}) كجهة اعتماد إضافية على المستخدم (${maherId}).`);
+        adminLoadUsers();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    // إعادة كلمة السر لمستخدم واحد إلى 1234
+    async function adminResetSinglePassword(uid, uname) {
+      if (!confirm(`هل أنت متأكد من إعادة كلمة السر للمستخدم (${uname || uid}) إلى الوضع الافتراضي 1234؟`)) return;
+      try {
+        const res = await api(`/api/admin/users/${encodeURIComponent(uid)}/reset-password`, {method: "POST"});
+        alert(res.message || "تمت إعادة كلمة السر إلى 1234 بنجاح");
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    // إعادة كلمات السر لجميع المستخدمين إلى 1234
+    async function resetAllUsersPasswords() {
+      if (!confirm("هل أنت متأكد من إعادة تعيين كلمات المرور لجميع المستخدمين إلى الوضع الافتراضي (1234)؟")) return;
+      try {
+        const res = await api("/api/admin/users/reset-all-passwords", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({include_admin: false})
+        });
+        alert(res.message || "تمت استعادة كلمات السر إلى 1234 بنجاح");
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function adminDeleteUser(uid) {
+      if (!confirm(`هل تريد حذف المستخدم (${uid})؟`)) return;
+      try {
+        await api(`/api/admin/users/${encodeURIComponent(uid)}`, {method: "DELETE"});
+        adminLoadUsers();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function adminUpdateCounter() {
+      const doc_type = document.getElementById("admCntType").value;
+      const section = document.getElementById("admCntSec").value;
+      const value = parseInt(document.getElementById("admCntVal").value || "0", 10);
+      try {
+        await api("/api/admin/counters", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({doc_type, section, value})
+        });
+        alert("تم تحديث العداد بنجاح");
+        loadStateCounters();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    function adminUploadCenterLogo(input) {
+      const f = input.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = async e => {
+        try {
+          const res = await api("/api/admin/center-logo", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({logo: e.target.result})
+          });
+          document.getElementById("topCenterLogoImg").src = res.center_logo;
+          document.getElementById("topCenterLogoBox").style.display = "flex";
+          alert("تم تحديث الشعار بنجاح");
+        } catch (err) {
+          alert(err.message);
+        }
+      };
+      reader.readAsDataURL(f);
+    }
+
+    async function adminResetCenterLogo() {
+      try {
+        const res = await api("/api/admin/center-logo", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({reset: true})
+        });
+        document.getElementById("topCenterLogoImg").src = res.center_logo || "";
+        alert("تمت استعادة الشعار الافتراضي");
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function adminLoadTemplate() {
+      const dtype = document.getElementById("admTplType").value;
+      try {
+        const res = await api(`/api/admin/templates/${dtype}`);
+        document.getElementById("admTplHtml").value = res.html || "";
+      } catch (e) {}
+    }
+
+    async function adminSaveTemplate(resetDefault) {
+      const dtype = document.getElementById("admTplType").value;
+      const html = document.getElementById("admTplHtml").value;
+      try {
+        const res = await api(`/api/admin/templates/${dtype}`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({html, reset_default: resetDefault})
+        });
+        document.getElementById("admTplHtml").value = res.html || "";
+        alert("تم حفظ القالب بنجاح");
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    setInterval(() => {
+      if (currentUser) loadNotifications();
+    }, 15000);
+
+    window.addEventListener("DOMContentLoaded", initApp);
+  </script>
+</body>
+</html>
