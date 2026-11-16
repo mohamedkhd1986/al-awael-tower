@@ -1,7 +1,2 @@
-
-config.json
-index.html
-letter.html
-sor.html
-ncr.html
+flask
 gunicorn
