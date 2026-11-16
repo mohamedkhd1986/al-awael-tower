@@ -64,7 +64,10 @@ STATUS_DONE, STATUS_CANCELLED = "completed", "cancelled"
 
 DEFAULT_RESET_PASSWORD = "1234"
 
-app = Flask(__name__)
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app = Flask(__name__, template_folder=BASE_DIR, static_folder=BASE_DIR)
 app.config["MAX_CONTENT_LENGTH"] = 120 * 1024 * 1024
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 _sk = DATA / "secret.key"
